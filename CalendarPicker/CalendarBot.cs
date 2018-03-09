@@ -7,7 +7,7 @@ using Telegram.Bot.Framework;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace CalendarPicker.Bot
+namespace CalendarPicker
 {
     public class CalendarBot : BotBase<CalendarBot>
     {

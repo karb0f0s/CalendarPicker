@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
-using CalendarPicker.Bot;
+using CalendarPicker.CalendarControl;
+using CalendarPicker.CalendarControl.Handlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,7 +28,7 @@ namespace CalendarPicker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTelegramBot<CalendarBot>(_configuration.GetSection("CalendarBot"))
-                .AddUpdateHandler<CalendarCommand>()
+                .AddCalendarHandlers<CalendarBot>()
                 .Configure();
         }
 
