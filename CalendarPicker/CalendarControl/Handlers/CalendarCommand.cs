@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CalendarPicker.CalendarControl.Services;
 using Telegram.Bot.Framework;
 using Telegram.Bot.Types;
 
@@ -14,18 +15,21 @@ namespace CalendarPicker.CalendarControl.Handlers
 
     public class CalendarCommand : CommandBase<CalendarCommandArgs>
     {
-        public CalendarCommand() : base(name: "calendar")
-        { }
+        private readonly LocalizationService _locale;
+
+        public CalendarCommand(LocalizationService locale)
+            : base(name: Constants.Command)
+        {
+            _locale = locale;
+        }
 
         public override async Task<UpdateHandlingResult> HandleCommand(IBot bot, Update update, CalendarCommandArgs args)
         {
-            var date = DateTime.Today;
-
-            var calendarMarkup = Markup.Calendar(date, Constants.DateCulture);
+            var calendarMarkup = Markup.Calendar(DateTime.Today, _locale.DateCulture);
 
             await bot.Client.SendTextMessageAsync(
                 update.Message.Chat.Id,
-                "Select date:",
+                "Pick date:",
                 replyMarkup: calendarMarkup);
 
             return UpdateHandlingResult.Handled;

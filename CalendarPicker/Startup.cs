@@ -30,6 +30,13 @@ namespace CalendarPicker
             services.AddTelegramBot<CalendarBot>(_configuration.GetSection("CalendarBot"))
                 .AddCalendarHandlers<CalendarBot>()
                 .Configure();
+
+            services.AddCalendarControlServices();
+
+            // Add bot configuration
+            services.AddSingleton(_configuration
+                .GetSection("CalendarBot")
+                .Get<CalendarBotConfiguration>());
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
