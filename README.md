@@ -1,7 +1,7 @@
 # CalendarPicker
 ## About
 Simple Telegram Bot with Calendar Picker control. Based on [Telegram.Bot.Framework](https://github.com/TelegramBots/Telegram.Bot.Framework)
-![](screenshot/markup_preview.png =150x)
+![](screenshot/markup_preview.png)
 
 # Configuration
 Just modify appsettings.json and run. You should specify `ApiToken`, default `BotLocale` is `"en-US"`, but you can play with [other options](https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx):
