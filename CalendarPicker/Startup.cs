@@ -31,6 +31,11 @@ namespace CalendarPicker
         {
             services.AddCalendarBot(_configuration.GetSection("CalendarBot"));
 
+            // Add configuration
+            services.AddSingleton(
+                _configuration.GetSection("CalendarBot").Get<CalendarBotConfiguration>()
+            );
+
             services.AddOperationServices();
         }
 
