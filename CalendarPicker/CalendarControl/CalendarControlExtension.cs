@@ -1,24 +1,27 @@
 ﻿using CalendarPicker.CalendarControl.Handlers;
-using CalendarPicker.CalendarControl.Services;
+using CalendarPicker.Options;
+using CalendarPicker.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot.Framework;
-using static Microsoft.Extensions.DependencyInjection.TelegramBotFrameworkIServiceCollectionExtensions;
 
 namespace CalendarPicker.CalendarControl
 {
     public static class CalendarControlExtension
     {
-        public static ITelegramBotFrameworkBuilder<TBot> AddCalendarHandlers<TBot>(this ITelegramBotFrameworkBuilder<TBot> botBuilder)
-            where TBot : BotBase<TBot> =>
-            botBuilder
-                .AddUpdateHandler<CalendarCommand>()
-                .AddUpdateHandler<ChangeToHandler>()
-                .AddUpdateHandler<PickDateHandler>()
-                .AddUpdateHandler<YearMonthPickerHandler>()
-                .AddUpdateHandler<MonthPickerHandler>()
-                .AddUpdateHandler<YearPickerHandler>();
+        public static IServiceCollection AddCalendarBot(this IServiceCollection services, IConfigurationSection botConfiguration) =>
+            services.AddTransient<CalendarBot>()
+                .Configure<BotOptions<CalendarBot>>(botConfiguration)
+                .Configure<CustomBotOptions<CalendarBot>>(botConfiguration)
+                .AddScoped<FaultedUpdateHandler>()
+                .AddScoped<CalendarCommand>()
+                .AddScoped<ChangeToHandler>()
+                .AddScoped<PickDateHandler>()
+                .AddScoped<YearMonthPickerHandler>()
+                .AddScoped<MonthPickerHandler>()
+                .AddScoped<YearPickerHandler>();
 
-        public static IServiceCollection AddCalendarControlServices(this IServiceCollection services) =>
+        public static IServiceCollection AddOperationServices(this IServiceCollection services) =>
             services
                 .AddTransient<LocalizationService>();
     }

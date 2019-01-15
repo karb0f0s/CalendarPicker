@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CalendarPicker.CalendarControl;
 using CalendarPicker.CalendarControl.Handlers;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Framework;
+using Telegram.Bot.Framework.Abstractions;
 
 namespace CalendarPicker
 {
@@ -27,49 +29,37 @@ namespace CalendarPicker
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTelegramBot<CalendarBot>(_configuration.GetSection("CalendarBot"))
-                .AddCalendarHandlers<CalendarBot>()
-                .Configure();
+            services.AddCalendarBot(_configuration.GetSection("CalendarBot"));
 
-            services.AddCalendarControlServices();
-
-            // Add bot configuration
-            services.AddSingleton(_configuration
-                .GetSection("CalendarBot")
-                .Get<CalendarBotConfiguration>());
+            services.AddOperationServices();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            loggerFactory.AddConsole(_configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-            ILogger logger = loggerFactory.CreateLogger<Startup>();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
 
-                app.UseTelegramBotLongPolling<CalendarBot>();
+                app.UseTelegramBotLongPolling<CalendarBot>(ConfigureBot(), startAfter: TimeSpan.FromSeconds(2));
             }
             else
             {
-                app.UseExceptionHandler(appBuilder =>
-                    appBuilder.Run(context =>
-                    {
-                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                        return Task.CompletedTask;
-                    })
-                );
-
-                logger.LogInformation($"Setting webhook for {nameof(CalendarBot)}...");
-                app.UseTelegramBotWebhook<CalendarBot>();
-                logger.LogInformation("Webhook is set for bot " + nameof(CalendarBot));
+                app.UseTelegramBotWebhook<CalendarBot>(ConfigureBot());
+                app.EnsureWebhookSet<CalendarBot>();
             }
 
-            app.Run(async context =>
-            {
-                await context.Response.WriteAsync("Hello World!");
-            });
+            app.Run(async context => await context.Response.WriteAsync("Hello World!"));
         }
+
+        private IBotBuilder ConfigureBot() =>
+            new BotBuilder()
+                .Use<FaultedUpdateHandler>()
+                .UseCommand<CalendarCommand>("calendar")
+                .UseWhen<ChangeToHandler>(ChangeToHandler.CanHandle)
+                .UseWhen<PickDateHandler>(PickDateHandler.CanHandle)
+                .UseWhen<YearMonthPickerHandler>(YearMonthPickerHandler.CanHandle)
+                .UseWhen<MonthPickerHandler>(MonthPickerHandler.CanHandle)
+                .UseWhen<YearPickerHandler>(YearPickerHandler.CanHandle)
+            ;
     }
 }

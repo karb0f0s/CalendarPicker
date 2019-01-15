@@ -4,8 +4,6 @@ namespace CalendarPicker.CalendarControl
 {
     public static class Constants
     {
-        public const string Command = "calendar";
-
         public const string ChangeTo = "cng-to/";
 
         public const string PickDate = "pck/";

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace CalendarPicker.CalendarControl.Services
+namespace CalendarPicker.Services
 {
     public class LocalizationService
     {

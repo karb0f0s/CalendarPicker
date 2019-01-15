@@ -7,7 +7,7 @@ namespace CalendarPicker.CalendarControl
 {
     public static class Markup
     {
-        public static InlineKeyboardMarkup Calendar(DateTime date, DateTimeFormatInfo dtfi)
+        public static InlineKeyboardMarkup Calendar(in DateTime date, DateTimeFormatInfo dtfi)
         {
             var keyboardRows = new List<IEnumerable<InlineKeyboardButton>>();
 
@@ -19,7 +19,7 @@ namespace CalendarPicker.CalendarControl
             return new InlineKeyboardMarkup(keyboardRows);
         }
 
-        public static InlineKeyboardMarkup PickMonthYear(DateTime date, DateTimeFormatInfo dtfi)
+        public static InlineKeyboardMarkup PickMonthYear(in DateTime date, DateTimeFormatInfo dtfi)
         {
             var keyboardRows = new InlineKeyboardButton[][]
             {
@@ -27,16 +27,19 @@ namespace CalendarPicker.CalendarControl
                 {
                     InlineKeyboardButton.WithCallbackData(
                         date.ToString("MMMM", dtfi),
-                        $"{Constants.PickMonth}{date.ToString(Constants.DateFormat)}"),
+                        $"{Constants.PickMonth}{date.ToString(Constants.DateFormat)}"
+                    ),
                     InlineKeyboardButton.WithCallbackData(
                         date.ToString("yyyy", dtfi),
-                        $"{Constants.PickYear}{date.ToString(Constants.DateFormat)}")
+                        $"{Constants.PickYear}{date.ToString(Constants.DateFormat)}"
+                    )
                 },
                 new InlineKeyboardButton[]
                 {
                     InlineKeyboardButton.WithCallbackData(
                         "<<",
-                        $"{Constants.ChangeTo}{date.ToString(Constants.DateFormat)}"),
+                        $"{Constants.ChangeTo}{date.ToString(Constants.DateFormat)}"
+                    ),
                     " "
                 }
             };
@@ -44,7 +47,7 @@ namespace CalendarPicker.CalendarControl
             return new InlineKeyboardMarkup(keyboardRows);
         }
 
-        public static InlineKeyboardMarkup PickMonth(DateTime date, DateTimeFormatInfo dtfi)
+        public static InlineKeyboardMarkup PickMonth(in DateTime date, DateTimeFormatInfo dtfi)
         {
             var keyboardRows = new InlineKeyboardButton[5][];
 
@@ -57,7 +60,8 @@ namespace CalendarPicker.CalendarControl
 
                     keyboardRow[j] = InlineKeyboardButton.WithCallbackData(
                         dtfi.MonthNames[month],
-                        $"{Constants.YearMonthPicker}{day.ToString(Constants.DateFormat)}");
+                        $"{Constants.YearMonthPicker}{day.ToString(Constants.DateFormat)}"
+                    );
                 }
 
                 keyboardRows[row] = keyboardRow;
@@ -67,7 +71,7 @@ namespace CalendarPicker.CalendarControl
             return new InlineKeyboardMarkup(keyboardRows);
         }
 
-        public static InlineKeyboardMarkup PickYear(DateTime date, DateTimeFormatInfo dtfi)
+        public static InlineKeyboardMarkup PickYear(in DateTime date, DateTimeFormatInfo dtfi)
         {
             var keyboardRows = new InlineKeyboardButton[5][];
 
@@ -82,7 +86,8 @@ namespace CalendarPicker.CalendarControl
 
                     keyboardRow[j] = InlineKeyboardButton.WithCallbackData(
                         day.ToString("yyyy", dtfi),
-                        $"{Constants.YearMonthPicker}{day.ToString(Constants.DateFormat)}");
+                        $"{Constants.YearMonthPicker}{day.ToString(Constants.DateFormat)}"
+                    );
                 }
 
                 keyboardRows[row] = keyboardRow;

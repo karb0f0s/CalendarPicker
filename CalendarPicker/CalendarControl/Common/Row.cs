@@ -7,13 +7,14 @@ namespace CalendarPicker.CalendarControl
 {
     public static class Row
     {
-        public static IEnumerable<InlineKeyboardButton> Date(DateTime date, DateTimeFormatInfo dtfi) =>
-             new InlineKeyboardButton[]
-             {
-                 InlineKeyboardButton.WithCallbackData(
-                     $"» {date.ToString("Y", dtfi)} «",
-                     $"{Constants.YearMonthPicker}{date.ToString(Constants.DateFormat)}")
-             };
+        public static IEnumerable<InlineKeyboardButton> Date(in DateTime date, DateTimeFormatInfo dtfi) =>
+            new InlineKeyboardButton[]
+            {
+            InlineKeyboardButton.WithCallbackData(
+                $"» {date.ToString("Y", dtfi)} «",
+                $"{Constants.YearMonthPicker}{date.ToString(Constants.DateFormat)}"
+            )
+            };
 
         public static IEnumerable<InlineKeyboardButton> DayOfWeek(DateTimeFormatInfo dtfi)
         {
@@ -42,8 +43,10 @@ namespace CalendarPicker.CalendarControl
 
                 for (int dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++)
                 {
-                    if ((weekNum == 0 && dayOfWeek < FirstDayOfWeek()) ||
-                        dayOfMonth > lastDayOfMonth)
+                    if ((weekNum == 0 && dayOfWeek < FirstDayOfWeek())
+                       ||
+                       dayOfMonth > lastDayOfMonth
+                    )
                     {
                         week[dayOfWeek] = " ";
                         continue;
@@ -51,7 +54,8 @@ namespace CalendarPicker.CalendarControl
 
                     week[dayOfWeek] = InlineKeyboardButton.WithCallbackData(
                         dayOfMonth.ToString(),
-                        $"{Constants.PickDate}{date.ToString(Constants.DateFormat)}");
+                        $"{Constants.PickDate}{date.ToString(Constants.DateFormat)}"
+                    );
 
                     dayOfMonth++;
                 }
@@ -62,26 +66,29 @@ namespace CalendarPicker.CalendarControl
             }
         }
 
-        public static IEnumerable<InlineKeyboardButton> Controls(DateTime date) =>
+        public static IEnumerable<InlineKeyboardButton> Controls(in DateTime date) =>
             new InlineKeyboardButton[]
             {
                 InlineKeyboardButton.WithCallbackData(
                     "<",
-                    $"{Constants.ChangeTo}{date.AddMonths(-1).ToString(Constants.DateFormat)}"),
+                    $"{Constants.ChangeTo}{date.AddMonths(-1).ToString(Constants.DateFormat)}"
+                ),
                 " ",
                 InlineKeyboardButton.WithCallbackData(
                     ">",
-                    $"{Constants.ChangeTo}{date.AddMonths(1).ToString(Constants.DateFormat)}"),
+                    $"{Constants.ChangeTo}{date.AddMonths(1).ToString(Constants.DateFormat)}"
+                ),
             };
 
-        public static InlineKeyboardButton[] BackToMonthYearPicker(DateTime date) =>
-             new InlineKeyboardButton[3]
-                {
-                    InlineKeyboardButton.WithCallbackData(
-                        "<<",
-                        $"{Constants.YearMonthPicker}{date.ToString(Constants.DateFormat)}"),
-                    " ",
-                    " "
-                };
+        public static InlineKeyboardButton[] BackToMonthYearPicker(in DateTime date) =>
+            new InlineKeyboardButton[3]
+            {
+                InlineKeyboardButton.WithCallbackData(
+                    "<<",
+                    $"{Constants.YearMonthPicker}{date.ToString(Constants.DateFormat)}"
+                ),
+                " ",
+                " "
+            };
     }
 }

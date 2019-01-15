@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
-using CalendarPicker.CalendarControl.Services;
-using Telegram.Bot.Framework;
-using Telegram.Bot.Types;
+using CalendarPicker.Services;
+using Telegram.Bot.Framework.Abstractions;
 using Telegram.Bot.Types.Enums;
 
 namespace CalendarPicker.CalendarControl.Handlers
@@ -17,28 +17,31 @@ namespace CalendarPicker.CalendarControl.Handlers
             _locale = locale;
         }
 
-        public bool CanHandleUpdate(IBot bot, Update update)
+        public static bool CanHandle(IUpdateContext context)
         {
             return
-                update.Type == UpdateType.CallbackQuery &&
-                update.IsCallbackCommand(Constants.PickDate);
+                context.Update.Type == UpdateType.CallbackQuery
+                &&
+                context.Update.IsCallbackCommand(Constants.PickDate);
         }
 
-        public async Task<UpdateHandlingResult> HandleUpdateAsync(IBot bot, Update update)
+        public async Task HandleAsync(IUpdateContext context, UpdateDelegate next, CancellationToken cancellationToken)
         {
             if (!DateTime.TryParseExact(
-                    update.TrimCallbackCommand(Constants.PickDate),
+                    context.Update.TrimCallbackCommand(Constants.PickDate),
                     Constants.DateFormat,
                     null,
                     DateTimeStyles.None,
-                    out var date))
-                return UpdateHandlingResult.Handled;
+                    out var date)
+            )
+            {
+                return;
+            }
 
-            await bot.Client.SendTextMessageAsync(
-                update.CallbackQuery.Message.Chat.Id,
-                date.ToString("d", _locale.DateCulture));
-
-            return UpdateHandlingResult.Handled;
+            await context.Bot.Client.SendTextMessageAsync(
+                context.Update.CallbackQuery.Message.Chat.Id,
+                date.ToString("d", _locale.DateCulture)
+            );
         }
     }
 }
